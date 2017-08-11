@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/select.h>
+#include <sys/resource.h>
 #include <err.h>
 
 #define linelen 512

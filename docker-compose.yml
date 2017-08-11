@@ -1,0 +1,45 @@
+# Searchdaimon Enterprise Search — development container.
+#
+# The image's default CMD is systemd (/usr/sbin/init), faithful to the appliance,
+# but CentOS 7's systemd needs cgroup v1 and won't boot on a cgroup-v2 host
+# (Docker Desktop, modern Linux). So for compose we override the command with a
+# small entrypoint script that starts the same services WITHOUT systemd — it runs
+# anywhere (Mac included) and needs none of systemd's privileges.
+#
+#   docker compose up -d --build   # build + start the appliance
+#   docker compose logs -f es      # follow startup
+#   docker compose exec es bash    # shell inside
+#
+# The web UI / admin panel is served by httpd and published on host port 8080.
+
+services:
+  es:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: searchdaimon/enterprise-search:latest
+    container_name: enterprise-search
+    hostname: searchdaimon3        # matches an mk/setup.mk build profile so `make` works in-container
+    # Start the stack without systemd (see header). The script is mounted below.
+    command: ["bash", "/usr/local/bin/es-entrypoint.sh"]
+    init: true                     # tini as PID 1 reaps the daemonized processes
+    environment:
+      BOITHOHOME: /home/boitho/boithoTools
+    volumes:
+      - ./docker/entrypoint.sh:/usr/local/bin/es-entrypoint.sh:ro
+      # Persist the search index/lot data and the MariaDB (boithobb) config DB
+      # across container recreation. Keep these together — the lots are the index
+      # and the DB holds which collections produced them.
+      - boithodata:/boithoData
+      - mariadb-data:/var/lib/mysql
+      # NOTE: do NOT bind-mount the source tree over /home/boitho/boithoTools for
+      # a normal run — it would shadow the binaries compiled into the image
+      # (bin/, lib/, crawlers/*.so) and config.mk with the host tree, which has
+      # none of them. For live development, mount a sub-path or rebuild instead.
+    ports:
+      - "8080:80"    # web UI + admin panel (httpd)
+      - "8443:443"
+
+volumes:
+  boithodata:
+  mariadb-data:

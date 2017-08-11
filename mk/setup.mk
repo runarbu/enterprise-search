@@ -81,8 +81,10 @@ LIBCONFIG=		`pkg-config --libs libconfig`
 LIBCONFIG_64=		`pkg-config --libs libconfig`
 CRAWL_STATIC=	
 US_STATIC=
-SMBCLIENT=		-lsmbclient
-LDAP = 			-DWITH_OPENLDAP -lldap
+# pkg-config supplies the samba include path (-I/usr/include/samba-4.0) as well
+# as -lsmbclient; the header is not in the default include path on RHEL/CentOS.
+SMBCLIENT=		`pkg-config --cflags --libs smbclient`
+LDAP = 			-DWITH_OPENLDAP -lldap -llber
 # Uncomment this to build 32 bit binaries on 64 bit ES v3
 #MYSQL_LIB=     		-L/usr/lib/mysql -lmysqlclient
 #PERL_EMBED_INC= 	-D_REENTRANT -D_GNU_SOURCE -fno-strict-aliasing -pipe -fstack-protector -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64  -I/usr/lib/perl5/CORE

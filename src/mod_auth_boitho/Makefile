@@ -5,7 +5,9 @@
 #   to create an suid root binary.
 #
 
-APXS = /usr/sbin/apxs
+# apxs lives in /usr/sbin on some distros (RHEL/CentOS) and /usr/bin on others.
+# Pick whichever exists, falling back to /usr/bin/apxs.
+APXS = $(firstword $(wildcard /usr/sbin/apxs /usr/bin/apxs) /usr/bin/apxs)
 CC = gcc
 INSTBINDIR = /usr/local/sbin
 DEFINES = -D INSTBINDIR=\\\"$(INSTBINDIR)\\\"

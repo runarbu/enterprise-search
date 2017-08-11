@@ -11,6 +11,7 @@ Readonly::Hash our %CFG => (
 	tpl           => 'default',
 	lang          => 'no',
 	num_results   => 10,
+	slow_query_warning => 1, # log a warning if a page/search takes longer than this many seconds
 	search_uri    => 'http://127.0.0.1/cgi-bin/dispatcher_allbb',
 	subname       => '',
 	version       => 2.1,

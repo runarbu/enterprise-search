@@ -54,7 +54,12 @@ WALL = -Wall -Wno-unused-function -Wno-char-subscripts -Wno-strict-aliasing -W -
 # generate the file output-data and its dependencies, not plot.png 
 
 
-all : init.d.stop dbupdate dep searchdbb dispatcher_allbb crawlManager2 infoquery crawlSMB crawlExchange boitho-bbdn PageInfobb IndexerLotbb mergeIIndex mergeUserToSubname ShowThumbbb everrun dictionarywordsLot boithoad Suggest gcRepobb gcAuthoritybb sdperl readUserToSubname bbdocumentWebAdd slicense_info usSQLBB usAD ShowCache2bb list_collections crawlExchangePublic LotInvertetIndexMaker3bb readIIndex rreadbb readDocumentIndexbb usSQLBB usAD crawlPush crawlLocal usShell sortCrc32attrMap perlxs-sdcrawl init.d.start
+# Full appliance rebuild: stop services, migrate the DB, compile, restart services.
+all : init.d.stop dbupdate build init.d.start
+
+# Compile-only target (no running MySQL or services required). Used by the
+# Docker image build; DB setup and daemon startup happen at container runtime.
+build : dep searchdbb dispatcher_allbb crawlManager2 infoquery crawlSMB crawlExchange boitho-bbdn PageInfobb IndexerLotbb mergeIIndex mergeUserToSubname ShowThumbbb everrun dictionarywordsLot boithoad Suggest gcRepobb gcAuthoritybb sdperl readUserToSubname bbdocumentWebAdd slicense_info usSQLBB usAD ShowCache2bb list_collections crawlExchangePublic LotInvertetIndexMaker3bb readIIndex rreadbb readDocumentIndexbb usSQLBB usAD crawlPush crawlLocal usShell sortCrc32attrMap perlxs-sdcrawl
 
 init.d.stop:
 	@echo ""
